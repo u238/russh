@@ -116,7 +116,7 @@ use std::pin::Pin;
 use std::sync::Arc;
 use std::task::{Context, Poll};
 
-use log::error;
+use log::{error, info};
 use async_trait::async_trait;
 use futures::future::Future;
 use russh_keys::key;
@@ -828,6 +828,7 @@ async fn read_ssh_id<R: AsyncRead + Unpin>(
     };
     // drop connections of libssh2 immediately
     if String::from_utf8_lossy(sshid).starts_with("SSH-2.0-libssh2") {
+        info!("dropping connection from libssh2");
         return Err(Error::Kex);
     }
 
