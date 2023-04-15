@@ -826,6 +826,11 @@ async fn read_ssh_id<R: AsyncRead + Unpin>(
     } else {
         read.read_ssh_id().await?
     };
+    // drop connections of libssh2 immediately
+    if String::from_utf8_lossy(sshid).starts_with("SSH-2.0-libssh2") {
+        return Err(Error::Kex);
+    }
+
     let mut exchange = Exchange::new();
     exchange.client_id.extend(sshid);
     // Preparing the response
